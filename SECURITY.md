@@ -2,15 +2,28 @@
 
 ## Reporting Vulnerabilities
 
-1. **DO NOT** open a public GitHub issue
-2. Email: **Site@hotmail.com**
-3. Subject: `[PowerShield Security] Brief description`
+If you discover a security vulnerability in PowerShield:
 
-## Response: Acknowledgment 48h, status 7d, resolution 30d.
+1. Do not open a public GitHub issue.
+2. Send an email to **Site@hotmail.com** with the subject line: `[PowerShield Security] Brief description`.
+3. Include steps to reproduce, affected module, and potential impact.
+
+## Response Timeline
+
+| Stage | Timeframe |
+|-------|-----------|
+| Acknowledgment | 48 hours |
+| Status update | 7 business days |
+| Resolution target | 30 calendar days |
 
 ## Scope
-**In scope:** Script injection, privilege escalation via PowerShield, incorrect hardening, backup exposure.
-**Out of scope:** Windows OS vulnerabilities (report to Microsoft), CIS content accuracy (report to CIS).
 
-## Important
-PowerShield modifies registry and system settings. Always test in non-production. Use `-Audit` mode for safe scanning.
+**In scope:** Script injection, privilege escalation through PowerShield, incorrect hardening that weakens security posture, credential exposure in logs or backups, report data leakage.
+
+**Out of scope:** Vulnerabilities in Windows Server itself (report to Microsoft MSRC), CIS Benchmark content accuracy (report to CIS), third-party tool interactions.
+
+## Important Note
+
+PowerShield modifies Windows registry and system configuration when executed with the `-Fix` parameter. Always validate changes in a non-production environment before deploying to production systems.
+
+The `-Audit` mode performs read-only assessment and is safe for production use.

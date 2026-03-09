@@ -695,7 +695,7 @@ h1{color:#0078d4}h2{color:#58a6ff;border-bottom:1px solid #21262d;padding-bottom
 table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 10px;border-bottom:1px solid #21262d}
 .stat{display:inline-block;padding:10px 20px;margin:4px;border:1px solid #21262d;border-radius:8px;font-weight:600}
 .pass{color:#22c55e}.fail{color:#ef4444}.warn{color:#eab308}</style></head>
-<body><h1>🛡️ PowerShield Hardening Report</h1>
+<body><h1>PowerShield Hardening Report</h1>
 <p>Generated: $(Get-Date) | Hostname: $env:COMPUTERNAME | OS: $(Get-CimInstance Win32_OperatingSystem | Select-Object -ExpandProperty Caption)</p>
 <h2>Summary</h2>
 <div class="stat pass">PASS: $($Script:PassCount)</div>
@@ -808,4 +808,70 @@ if ($Module) {
 }
 
 New-HtmlReport
+Export-CSVReport
+Export-JSONReport
+Show-ExecutiveSummary
 Show-Summary
+
+# ═══════════════════════════════════════════════════════════════════════
+# ENTERPRISE FEATURES — CSV/JSON Export, Executive Summary, Severity
+# ═══════════════════════════════════════════════════════════════════════
+function Export-CSVReport {
+    $csvPath = "$Script:LogDir\PowerShield-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
+    $Script:Results | Export-Csv -Path $csvPath -NoTypeInformation -Encoding UTF8
+    Log-Info "CSV report exported: $csvPath"
+}
+
+function Export-JSONReport {
+    $jsonPath = "$Script:LogDir\PowerShield-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+    $reportObj = @{
+        Metadata = @{
+            Tool        = "PowerShield"
+            Version     = $Script:VERSION
+            Hostname    = $env:COMPUTERNAME
+            Domain      = $env:USERDOMAIN
+            OS          = (Get-CimInstance Win32_OperatingSystem).Caption
+            RunDate     = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ')
+            Profile     = $Profile
+            Mode        = $modeName
+            RunBy       = $env:USERNAME
+        }
+        Summary = @{
+            TotalChecks = $Script:TotalCount
+            Passed      = $Script:PassCount
+            Failed      = $Script:FailCount
+            Warnings    = $Script:WarnCount
+            Skipped     = $Script:SkipCount
+            Score       = if ($Script:TotalCount -gt 0) { [math]::Round($Script:PassCount / $Script:TotalCount * 100, 1) } else { 0 }
+        }
+        Results = $Script:Results
+    }
+    $reportObj | ConvertTo-Json -Depth 5 | Out-File -FilePath $jsonPath -Encoding UTF8
+    Log-Info "JSON report exported: $jsonPath"
+}
+
+function Show-ExecutiveSummary {
+    $score = if ($Script:TotalCount -gt 0) { [math]::Round($Script:PassCount / $Script:TotalCount * 100, 1) } else { 0 }
+    $criticalFails = ($Script:Results | Where-Object { $_.Status -eq 'FAIL' -and $_.Message -match 'critical|CRITICAL|DISABLED|Enabled \(must' }).Count
+    $os = (Get-CimInstance Win32_OperatingSystem -ErrorAction SilentlyContinue).Caption
+
+    Write-Host ""
+    Write-Host "  EXECUTIVE SUMMARY" -ForegroundColor White
+    Write-Host "  ─────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  System:         $env:COMPUTERNAME ($os)" -ForegroundColor Gray
+    Write-Host "  Domain:         $env:USERDOMAIN" -ForegroundColor Gray
+    Write-Host "  Assessment:     $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
+    Write-Host "  Profile:        $Profile" -ForegroundColor Gray
+    Write-Host "  Compliance:     $score%" -ForegroundColor $(if ($score -ge 80) {'Green'} elseif ($score -ge 60) {'Yellow'} else {'Red'})
+    Write-Host "  Critical Gaps:  $criticalFails" -ForegroundColor $(if ($criticalFails -eq 0) {'Green'} else {'Red'})
+    Write-Host "  ─────────────────────────────────────────────" -ForegroundColor DarkGray
+
+    if ($criticalFails -gt 0) {
+        Write-Host ""
+        Write-Host "  CRITICAL FINDINGS REQUIRING IMMEDIATE ACTION:" -ForegroundColor Red
+        $Script:Results | Where-Object { $_.Status -eq 'FAIL' -and $_.Message -match 'critical|CRITICAL|DISABLED|Enabled \(must' } | ForEach-Object {
+            Write-Host "    - $($_.Message)" -ForegroundColor Red
+        }
+    }
+    Write-Host ""
+}
