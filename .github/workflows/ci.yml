@@ -1,0 +1,17 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          Invoke-ScriptAnalyzer -Path .\PowerShield.ps1 -Severity Error,Warning
+      - name: Syntax check
+        shell: pwsh
+        run: |
+          $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content .\PowerShield.ps1 -Raw), [ref]$null)
+          Write-Host "Syntax OK"
