@@ -3,195 +3,265 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="PowerShield — Windows Server Hardening Tool. CIS Benchmark, NIST 800-53, DISA STIG, Microsoft Security Baselines.">
-<title>PowerShield — Windows Server Hardening</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<meta name="description" content="PowerShield — Enterprise Windows Server Hardening Framework. CIS Benchmark, NIST 800-53, DISA STIG, Microsoft Security Baselines.">
+<title>PowerShield — Windows Server Hardening Framework</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%230078d4'/><text x='8' y='12' text-anchor='middle' font-size='10' fill='white' font-weight='bold'>P</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;600;700&family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0d1117;--bg2:#161b22;--surface:#1c2333;--text:#e6edf3;--text2:#8b949e;--text3:#484f58;
---blue:#0078d4;--blue2:#1a8aff;--blue-dim:#0078d410;--green:#22c55e;--red:#ef4444;--yellow:#eab308;
+--accent:#0078d4;--accent2:#1a8aff;--accent-dim:#0078d410;--pass:#22c55e;--fail:#ef4444;--warn:#eab308;
 --border:#21262d;--mono:'Cascadia Code','Consolas',monospace;--sans:'Segoe UI',system-ui,sans-serif}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
-.container{max-width:1100px;margin:0 auto;padding:0 20px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
 
-.hero{padding:60px 0 40px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,#0078d408 0%,transparent 60%);pointer-events:none}
-.hero-icon{font-size:4rem;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(0,120,212,0.3))}
-.hero h1{font-family:var(--mono);font-size:3rem;font-weight:700;color:var(--blue);letter-spacing:-1px}
-.hero h1 span{color:var(--text3);font-size:1rem;font-weight:400;margin-left:8px}
-.hero-sub{font-size:1.05rem;color:var(--text2);margin:8px 0 24px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6}
-.hero-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
-.hb{padding:4px 12px;border-radius:4px;font-family:var(--mono);font-size:0.7rem;font-weight:600;color:var(--blue);border:1px solid #0078d440;background:#0078d408}
+/* Header bar */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{font-family:var(--mono);font-size:0.92rem;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:8px}
+.topbar-brand span{color:var(--text3);font-weight:400;font-size:0.72rem}
+.topbar-links{display:flex;gap:16px;font-size:0.78rem}
+.topbar-links a{color:var(--text2);text-decoration:none;transition:color .15s}
+.topbar-links a:hover{color:var(--accent)}
+
+/* Hero */
+.hero{padding:64px 0 48px;text-align:center;border-bottom:1px solid var(--border)}
+.hero h1{font-family:var(--mono);font-size:2.8rem;font-weight:700;color:var(--accent);letter-spacing:-1.5px;margin-bottom:8px}
+.hero-sub{font-size:1rem;color:var(--text2);max-width:640px;margin:0 auto 20px;line-height:1.7}
+.hero-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.htag{padding:4px 12px;border-radius:4px;font-family:var(--mono);font-size:0.68rem;font-weight:600;color:var(--accent);border:1px solid #0078d430;background:var(--accent-dim)}
 .hero-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn{padding:10px 24px;border-radius:8px;font-family:var(--mono);font-size:0.85rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;border:none}
-.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue2)}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn{padding:10px 24px;border-radius:6px;font-family:var(--mono);font-size:0.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;display:inline-block;border:none}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--bg2);border:1px solid var(--border);color:var(--text2)}.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
 
-.terminal{background:#010409;border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:720px;margin:40px auto;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
-.terminal-bar{background:#161b22;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
-.terminal-bar span{font-family:var(--mono);font-size:0.7rem;color:var(--text2)}
-.terminal-body{padding:16px;font-family:var(--mono);font-size:0.75rem;line-height:1.8;color:var(--text2);overflow-x:auto;white-space:pre}
-.tc{color:var(--blue)}.tg{color:var(--green)}.tr{color:var(--red)}.ty{color:var(--yellow)}.tw{color:var(--text);font-weight:600}
+/* Terminal */
+.terminal{background:#010409;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-width:740px;margin:48px auto}
+.terminal-bar{background:var(--bg2);padding:8px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:0.68rem;color:var(--text3)}
+.terminal-dot{width:10px;height:10px;border-radius:50%}
+.terminal-body{padding:18px;font-family:var(--mono);font-size:0.72rem;line-height:1.85;color:var(--text2);overflow-x:auto;white-space:pre}
+.ta{color:var(--accent)}.tp{color:var(--pass)}.tf{color:var(--fail)}.tw{color:var(--warn)}.tb{color:var(--text);font-weight:600}
 
-.section{padding:48px 0}
-.section-title{font-family:var(--mono);font-size:0.82rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:24px;display:flex;align-items:center;gap:10px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:48px 0 0}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px 16px;text-align:center}
+.stat-num{font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--accent)}
+.stat-label{font-size:0.72rem;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
 
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;transition:border-color .15s}
-.mod-card:hover{border-color:var(--blue)}
-.mod-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.mod-num{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:0.72rem;font-weight:700;background:#0078d415;color:var(--blue);border:1px solid #0078d430;flex-shrink:0}
-.mod-name{font-weight:600;font-size:0.92rem}
-.mod-cis{font-family:var(--mono);font-size:0.65rem;color:var(--text2)}
-.mod-desc{font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:8px}
-.mod-tags{display:flex;gap:4px;flex-wrap:wrap}
-.mod-tag{padding:2px 8px;border-radius:4px;font-family:var(--mono);font-size:0.62rem;background:var(--bg);color:var(--text2);border:1px solid var(--border)}
+/* Sections */
+.section{padding:48px 0;border-bottom:1px solid var(--border)}
+.section:last-of-type{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:0.7rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.section-title{font-size:1.3rem;font-weight:600;margin-bottom:8px}
+.section-desc{font-size:0.9rem;color:var(--text2);line-height:1.7;max-width:640px;margin-bottom:24px}
 
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
-.stat-num{font-family:var(--mono);font-size:2.2rem;font-weight:700;color:var(--blue)}
-.stat-label{font-size:0.72rem;color:var(--text2);margin-top:4px}
+/* Module grid */
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.mod{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;transition:border-color .15s;display:flex;gap:12px}
+.mod:hover{border-color:var(--accent)}
+.mod-num{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:0.72rem;font-weight:700;background:var(--accent-dim);color:var(--accent);border:1px solid #0078d420;flex-shrink:0}
+.mod-content{flex:1;min-width:0}
+.mod-name{font-weight:600;font-size:0.88rem;margin-bottom:2px}
+.mod-ref{font-family:var(--mono);font-size:0.62rem;color:var(--text3);margin-bottom:6px}
+.mod-desc{font-size:0.78rem;color:var(--text2);line-height:1.6}
+.mod-meta{display:flex;gap:6px;margin-top:8px}
+.mod-tag{padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:0.6rem;background:var(--bg);color:var(--text3);border:1px solid var(--border)}
 
-.install-code{background:#010409;border:1px solid var(--border);border-radius:8px;padding:16px;font-family:var(--mono);font-size:0.82rem;color:var(--text2);line-height:1.8;overflow-x:auto}
-.install-code .cmd{color:var(--blue)}.install-code .comment{color:var(--text3)}
+/* Table */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:0.82rem}
+th{text-align:left;padding:12px 14px;font-family:var(--mono);font-size:0.68rem;color:var(--accent);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg2)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#ffffff04}
 
-.std-table{width:100%;border-collapse:collapse;font-size:0.85rem}
-.std-table th{text-align:left;padding:10px;font-family:var(--mono);font-size:0.72rem;color:var(--blue);border-bottom:1px solid var(--border);text-transform:uppercase}
-.std-table td{padding:10px;border-bottom:1px solid var(--border);color:var(--text2)}
-.std-table tr:hover td{color:var(--text);background:var(--surface)}
+/* Code block */
+.code{background:#010409;border:1px solid var(--border);border-radius:8px;padding:20px;font-family:var(--mono);font-size:0.78rem;color:var(--text2);line-height:1.9;overflow-x:auto}
+.code .c{color:var(--text3)}.code .k{color:var(--accent)}
 
-.footer{text-align:center;padding:32px 16px;font-size:0.78rem;color:var(--text2);border-top:1px solid var(--border)}
-.footer a{color:var(--blue);text-decoration:none}
+/* Footer */
+.footer{text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text3);border-top:1px solid var(--border)}
+.footer a{color:var(--accent);text-decoration:none}
 </style>
 </head>
 <body>
+
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="topbar-brand">PowerShield <span>v2.0</span></div>
+    <div class="topbar-links">
+        <a href="https://github.com/SiteQ8/PowerShield">Source Code</a>
+        <a href="https://github.com/SiteQ8/PowerShield/issues">Issues</a>
+        <a href="https://github.com/SiteQ8/PowerShield/discussions">Discussions</a>
+    </div>
+</div>
+
 <div class="container">
+
+    <!-- Hero -->
     <div class="hero">
-        <div class="hero-icon">🛡️</div>
-        <h1>PowerShield <span>v2.0</span></h1>
-        <div class="hero-sub">Your only destination for a secured Windows Server environment. 811 lines of PowerShell covering 120+ CIS, NIST, STIG, and Microsoft Security Baseline checks.</div>
-        <div class="hero-badges">
-            <span class="hb">CIS Benchmark</span>
-            <span class="hb">NIST 800-53</span>
-            <span class="hb">DISA STIG</span>
-            <span class="hb">MS Baselines</span>
-            <span class="hb">12 Modules</span>
-            <span class="hb">HTML Reports</span>
+        <h1>PowerShield</h1>
+        <div class="hero-sub">Enterprise-grade security baseline enforcement for Windows Server. A single PowerShell script that audits, remediates, and reports on 120+ hardening controls aligned to CIS Benchmark, NIST 800-53, DISA STIG, and Microsoft Security Baselines.</div>
+        <div class="hero-tags">
+            <span class="htag">CIS Benchmark</span>
+            <span class="htag">NIST SP 800-53</span>
+            <span class="htag">DISA STIG</span>
+            <span class="htag">Microsoft Baselines</span>
+            <span class="htag">Server 2019 / 2022</span>
+            <span class="htag">12 Modules</span>
         </div>
         <div class="hero-actions">
-            <a class="btn btn-primary" href="https://github.com/SiteQ8/PowerShield">⭐ View on GitHub</a>
-            <a class="btn btn-outline" href="https://raw.githubusercontent.com/SiteQ8/PowerShield/main/PowerShield.ps1">📥 Download Script</a>
+            <a class="btn btn-primary" href="https://github.com/SiteQ8/PowerShield">View Repository</a>
+            <a class="btn btn-secondary" href="https://raw.githubusercontent.com/SiteQ8/PowerShield/main/PowerShield.ps1">Download Script</a>
         </div>
     </div>
 
+    <!-- Terminal Demo -->
     <div class="terminal">
         <div class="terminal-bar">
-            <span>⚡</span><span>Administrator: Windows PowerShell</span>
+            <div class="terminal-dot" style="background:#ff5f57"></div>
+            <div class="terminal-dot" style="background:#febc2e"></div>
+            <div class="terminal-dot" style="background:#28c840"></div>
+            <span style="margin-left:8px">Administrator: PowerShell</span>
         </div>
-        <div class="terminal-body">
-<span class="tc">PS C:\PowerShield&gt;</span> <span class="tw">.\PowerShield.ps1 -Audit</span>
+        <div class="terminal-body"><span class="ta">PS C:\PowerShield&gt;</span> <span class="tb">.\PowerShield.ps1 -Audit</span>
 
-<span class="tc">    ██████╗  ██████╗ ██╗    ██╗███████╗██████╗ ███████╗██╗  ██╗██╗███████╗██╗     ██████╗</span>
-<span class="tc">    ██╔══██╗██╔═══██╗██║    ██║██╔════╝██╔══██╗██╔════╝██║  ██║██║██╔════╝██║     ██╔══██╗</span>
-<span class="tc">    ██████╔╝██║   ██║██║ █╗ ██║█████╗  ██████╔╝███████╗███████║██║█████╗  ██║     ██║  ██║</span>
-<span class="tc">    ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═════╝</span>
+<span class="ta">    ██████╗  ██████╗ ██╗    ██╗███████╗██████╗ ███████╗██╗  ██╗██╗███████╗██╗     ██████╗</span>
+<span class="ta">    ██████╔╝██║   ██║██║ █╗ ██║█████╗  ██████╔╝███████╗███████║██║█████╗  ██║     ██║  ██║</span>
+<span class="ta">    ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═════╝</span>
 
-  <span class="tc">[INFO]</span> Mode: AUDIT ONLY
-  <span class="tc">[INFO]</span> OS: Windows Server 2022 Datacenter
+  <span class="ta">[INFO]</span> Mode: AUDIT ONLY
+  <span class="ta">[INFO]</span> OS: Windows Server 2022 Datacenter
+  <span class="ta">[INFO]</span> Profile: level1
 
-<span class="tw">━━━ 1. ACCOUNT POLICIES (CIS 1.1-1.2) ━━━</span>
-  <span class="tg">[PASS]</span> CIS 1.1.1 — Password history: 24 (>=24)
-  <span class="tg">[PASS]</span> CIS 1.1.4 — Min password length: 14 (>=14)
-  <span class="tg">[PASS]</span> CIS 1.1.5 — Password complexity: Enabled
+<span class="tb">━━━ 1. ACCOUNT POLICIES (CIS 1.1-1.2) ━━━</span>
+  <span class="tp">[PASS]</span> CIS 1.1.1 — Password history: 24 (>=24)
+  <span class="tp">[PASS]</span> CIS 1.1.4 — Min password length: 14 (>=14)
+  <span class="tp">[PASS]</span> CIS 1.1.5 — Password complexity: Enabled
+  <span class="tf">[FAIL]</span> CIS 1.2.2 — Lockout threshold: 0 (should be 1-5)
 
-<span class="tw">━━━ 4. WINDOWS FIREWALL (CIS 9) ━━━</span>
-  <span class="tg">[PASS]</span> CIS 9.x — Domain profile: Enabled
-  <span class="tr">[FAIL]</span> CIS 9.x — Public inbound default: Allow (should be Block)
+<span class="tb">━━━ 6. NETWORK SECURITY (CIS 18.4) ━━━</span>
+  <span class="tf">[FAIL]</span> CIS 18.4.x — SMBv1: Enabled (critical — disable immediately)
+  <span class="tp">[PASS]</span> CIS 18.4.x — LLMNR: Disabled
+  <span class="tp">[PASS]</span> CIS 18.9.x — RDP NLA: Required
 
-<span class="tw">━━━ 6. NETWORK SECURITY (CIS 18.4) ━━━</span>
-  <span class="tr">[FAIL]</span> CIS 18.4.x — SMBv1: Enabled (critical — disable immediately)
-  <span class="tg">[PASS]</span> CIS 18.4.x — LLMNR: Disabled
+<span class="tb">━━━ 10. TLS &amp; CRYPTOGRAPHY (NIST/STIG) ━━━</span>
+  <span class="tp">[PASS]</span> NIST — TLS 1.2 (Server): Enabled
+  <span class="tf">[FAIL]</span> NIST — TLS 1.0 (Server): Enabled (must disable)
 
-<span class="tw">═══════════════════════════════════════════════════</span>
-<span class="tw">  PowerShield Hardening Summary</span>
-<span class="tw">═══════════════════════════════════════════════════</span>
-  <span class="tg">PASS:</span>  89    <span class="tr">FAIL:</span>  18    <span class="ty">WARN:</span>  12
-  Score: <span class="tc" style="font-weight:700">73%</span> — Needs improvement
-        </div>
+  <span class="tb">EXECUTIVE SUMMARY</span>
+  ─────────────────────────────────────────────
+  System:         DC01 (Windows Server 2022 Datacenter)
+  Domain:         CORP.LOCAL
+  Compliance:     <span class="ta">74.8%</span>
+  Critical Gaps:  <span class="tf">3</span>
+
+<span class="tb">═══════════════════════════════════════════════════</span>
+  PASS: 89    FAIL: 18    WARN: 12    TOTAL: 119
+  Reports: HTML, CSV, JSON exported to C:\PowerShield\Logs\
+<span class="tb">═══════════════════════════════════════════════════</span></div>
     </div>
 
+    <!-- Stats -->
     <div class="stats">
-        <div class="stat"><div class="stat-num">811</div><div class="stat-label">Lines of Code</div></div>
+        <div class="stat"><div class="stat-num">874</div><div class="stat-label">Lines of Code</div></div>
         <div class="stat"><div class="stat-num">12</div><div class="stat-label">Modules</div></div>
         <div class="stat"><div class="stat-num">120+</div><div class="stat-label">Security Checks</div></div>
         <div class="stat"><div class="stat-num">4</div><div class="stat-label">Standards</div></div>
     </div>
 
+    <!-- Modules -->
     <div class="section">
-        <div class="section-title">Hardening Modules</div>
+        <div class="section-label">Hardening Modules</div>
+        <div class="section-title">12 modules covering the complete Windows Server attack surface</div>
+        <div class="section-desc">Each module maps directly to CIS Benchmark sections, NIST 800-53 control families, and DISA STIG requirements. Modules can be executed individually or as a complete assessment.</div>
         <div class="mod-grid">
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">1</div><div><div class="mod-name">Account Policies</div><div class="mod-cis">CIS 1.1-1.2</div></div></div><div class="mod-desc">Password policy (history, age, length, complexity), account lockout (duration, threshold, reset counter).</div><div class="mod-tags"><span class="mod-tag">9 checks</span><span class="mod-tag">secedit</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">2</div><div><div class="mod-name">Local Policies</div><div class="mod-cis">CIS 2.2-2.3</div></div></div><div class="mod-desc">Administrator/Guest accounts, blank passwords, last username, inactivity timeout, SMB signing, SAM enumeration, NTLMv2, UAC.</div><div class="mod-tags"><span class="mod-tag">12 checks</span><span class="mod-tag">registry</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">3</div><div><div class="mod-name">Audit Policy</div><div class="mod-cis">CIS 17</div></div></div><div class="mod-desc">15 advanced audit subcategories — credential validation, account management, process creation, logon/logoff, privilege use.</div><div class="mod-tags"><span class="mod-tag">15 checks</span><span class="mod-tag">auditpol</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">4</div><div><div class="mod-name">Windows Firewall</div><div class="mod-cis">CIS 9</div></div></div><div class="mod-desc">All 3 profiles (Domain, Private, Public) — enabled state, default inbound/outbound actions, logging configuration.</div><div class="mod-tags"><span class="mod-tag">12 checks</span><span class="mod-tag">auto-fix</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">5</div><div><div class="mod-name">Defender & Exploit Guard</div><div class="mod-cis">CIS 18.9.47</div></div></div><div class="mod-desc">Real-time protection, behavior monitoring, PUA, IOAV, cloud protection, signature age, ASLR, Credential Guard.</div><div class="mod-tags"><span class="mod-tag">10 checks</span><span class="mod-tag">VBS</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">6</div><div><div class="mod-name">Network Security</div><div class="mod-cis">CIS 18.4</div></div></div><div class="mod-desc">SMBv1 disable, SMB encryption, WinRM, LLMNR, NetBIOS, IPv6, Remote Desktop, NLA enforcement.</div><div class="mod-tags"><span class="mod-tag">8 checks</span><span class="mod-tag">auto-fix</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">7</div><div><div class="mod-name">Services</div><div class="mod-cis">CIS 5</div></div></div><div class="mod-desc">20 unnecessary services (Browser, IIS, FTP, SNMP, UPnP, Xbox, WSL, hotspot, media sharing) — stop, disable, mask.</div><div class="mod-tags"><span class="mod-tag">20 checks</span><span class="mod-tag">auto-fix</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">8</div><div><div class="mod-name">Registry Hardening</div><div class="mod-cis">CIS 18</div></div></div><div class="mod-desc">14 critical registry keys — AlwaysInstallElevated, WinRM auth, LSA Protection, WDigest, SEHOP, PowerShell logging, Remote Credential Guard.</div><div class="mod-tags"><span class="mod-tag">14 checks</span><span class="mod-tag">auto-fix</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">9</div><div><div class="mod-name">Event Logs</div><div class="mod-cis">CIS 18.9.26</div></div></div><div class="mod-desc">Application, Security, System, Setup log sizes. Sysmon detection. PowerShell module logging.</div><div class="mod-tags"><span class="mod-tag">6 checks</span><span class="mod-tag">wevtutil</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">10</div><div><div class="mod-name">TLS & Cryptography</div><div class="mod-cis">NIST/STIG</div></div></div><div class="mod-desc">Disable SSL 2.0/3.0, TLS 1.0/1.1. Enforce TLS 1.2/1.3. Disable RC4, DES, NULL ciphers.</div><div class="mod-tags"><span class="mod-tag">12+ checks</span><span class="mod-tag">SCHANNEL</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">11</div><div><div class="mod-name">Windows Update</div><div class="mod-cis">CIS 18.9.108</div></div></div><div class="mod-desc">Automatic updates enabled, last patch age, pending reboot detection.</div><div class="mod-tags"><span class="mod-tag">3 checks</span><span class="mod-tag">WSUS</span></div></div>
-            <div class="mod-card"><div class="mod-header"><div class="mod-num">12</div><div><div class="mod-name">Additional Hardening</div><div class="mod-cis">NIST/STIG</div></div></div><div class="mod-desc">Login banner, AutoPlay, BitLocker, Print Spooler (PrintNightmare), admin shares, Spectre/Meltdown, local admin count.</div><div class="mod-tags"><span class="mod-tag">7 checks</span><span class="mod-tag">auto-fix</span></div></div>
+            <div class="mod"><div class="mod-num">01</div><div class="mod-content"><div class="mod-name">Account Policies</div><div class="mod-ref">CIS 1.1–1.2 | NIST IA</div><div class="mod-desc">Password policy enforcement (history, age, length, complexity, reversible encryption) and account lockout configuration (threshold, duration, reset counter).</div><div class="mod-meta"><span class="mod-tag">9 checks</span><span class="mod-tag">secedit</span></div></div></div>
+            <div class="mod"><div class="mod-num">02</div><div class="mod-content"><div class="mod-name">Local Policies</div><div class="mod-ref">CIS 2.2–2.3 | NIST AC, IA</div><div class="mod-desc">Administrator/Guest accounts, blank password restriction, SMB signing, SAM enumeration, NTLMv2 enforcement, UAC configuration, inactivity timeout.</div><div class="mod-meta"><span class="mod-tag">12 checks</span><span class="mod-tag">registry</span></div></div></div>
+            <div class="mod"><div class="mod-num">03</div><div class="mod-content"><div class="mod-name">Advanced Audit Policy</div><div class="mod-ref">CIS 17 | NIST AU</div><div class="mod-desc">15 advanced audit subcategories: credential validation, account management, process creation, logon/logoff events, privilege use, policy changes, system integrity.</div><div class="mod-meta"><span class="mod-tag">15 checks</span><span class="mod-tag">auditpol</span></div></div></div>
+            <div class="mod"><div class="mod-num">04</div><div class="mod-content"><div class="mod-name">Windows Firewall</div><div class="mod-ref">CIS 9 | NIST SC</div><div class="mod-desc">Domain, Private, and Public profiles: enabled state verification, default inbound action (Block), outbound action, and firewall logging configuration.</div><div class="mod-meta"><span class="mod-tag">12 checks</span><span class="mod-tag">auto-fix</span></div></div></div>
+            <div class="mod"><div class="mod-num">05</div><div class="mod-content"><div class="mod-name">Defender and Exploit Guard</div><div class="mod-ref">CIS 18.9.47 | NIST SI</div><div class="mod-desc">Real-time protection, behavior monitoring, PUA detection, IOAV scanning, cloud protection (MAPS), signature freshness, ASLR, Credential Guard (VBS).</div><div class="mod-meta"><span class="mod-tag">10 checks</span><span class="mod-tag">VBS</span></div></div></div>
+            <div class="mod"><div class="mod-num">06</div><div class="mod-content"><div class="mod-name">Network Security</div><div class="mod-ref">CIS 18.4 | NIST SC, AC</div><div class="mod-desc">SMBv1 elimination, SMB encryption, WinRM hardening, LLMNR and NetBIOS disablement, IPv6 review, Remote Desktop with Network Level Authentication.</div><div class="mod-meta"><span class="mod-tag">8 checks</span><span class="mod-tag">auto-fix</span></div></div></div>
+            <div class="mod"><div class="mod-num">07</div><div class="mod-content"><div class="mod-name">Windows Services</div><div class="mod-ref">CIS 5 | NIST CM</div><div class="mod-desc">Identification and disablement of 20 unnecessary services: IIS, FTP, SNMP, UPnP, SSDP, Xbox, WSL, mobile hotspot, media sharing, and legacy services.</div><div class="mod-meta"><span class="mod-tag">20 checks</span><span class="mod-tag">auto-fix</span></div></div></div>
+            <div class="mod"><div class="mod-num">08</div><div class="mod-content"><div class="mod-name">Registry Hardening</div><div class="mod-ref">CIS 18 | STIG</div><div class="mod-desc">14 critical registry controls: LSA Protection (RunAsPPL), WDigest credential caching, SEHOP, PowerShell script block logging, AlwaysInstallElevated, Remote Credential Guard.</div><div class="mod-meta"><span class="mod-tag">14 checks</span><span class="mod-tag">auto-fix</span></div></div></div>
+            <div class="mod"><div class="mod-num">09</div><div class="mod-content"><div class="mod-name">Event Log Configuration</div><div class="mod-ref">CIS 18.9.26 | NIST AU</div><div class="mod-desc">Event log sizing for Application, Security, System, and Setup logs. Sysmon deployment detection. PowerShell module logging verification.</div><div class="mod-meta"><span class="mod-tag">6 checks</span><span class="mod-tag">wevtutil</span></div></div></div>
+            <div class="mod"><div class="mod-num">10</div><div class="mod-content"><div class="mod-name">TLS and Cryptography</div><div class="mod-ref">NIST SC-13 | STIG</div><div class="mod-desc">Deprecation of SSL 2.0/3.0 and TLS 1.0/1.1. Enforcement of TLS 1.2/1.3. Disablement of RC4, DES, Triple DES, and NULL cipher suites via SCHANNEL registry.</div><div class="mod-meta"><span class="mod-tag">12+ checks</span><span class="mod-tag">SCHANNEL</span></div></div></div>
+            <div class="mod"><div class="mod-num">11</div><div class="mod-content"><div class="mod-name">Windows Update</div><div class="mod-ref">CIS 18.9.108 | NIST SI</div><div class="mod-desc">Automatic update policy verification, patch currency assessment (days since last hotfix), and pending reboot detection.</div><div class="mod-meta"><span class="mod-tag">3 checks</span><span class="mod-tag">WSUS</span></div></div></div>
+            <div class="mod"><div class="mod-num">12</div><div class="mod-content"><div class="mod-name">Additional Hardening</div><div class="mod-ref">NIST CM | STIG</div><div class="mod-desc">Login warning banners, AutoPlay disablement, BitLocker verification, Print Spooler review (PrintNightmare), administrative shares, Spectre/Meltdown mitigations, local administrator count.</div><div class="mod-meta"><span class="mod-tag">7 checks</span><span class="mod-tag">auto-fix</span></div></div></div>
         </div>
     </div>
 
+    <!-- Quick Start -->
     <div class="section">
+        <div class="section-label">Deployment</div>
         <div class="section-title">Quick Start</div>
-        <div class="install-code">
-<span class="comment"># Clone the repo</span>
-<span class="cmd">git clone https://github.com/SiteQ8/PowerShield.git</span>
-<span class="cmd">cd PowerShield</span>
+        <div class="section-desc">PowerShield requires PowerShell 5.1 or later and must be executed with Administrator privileges. No external modules or dependencies are required.</div>
+        <div class="code"><span class="c"># Clone repository</span>
+<span class="k">git clone https://github.com/SiteQ8/PowerShield.git</span>
+<span class="k">cd PowerShield</span>
 
-<span class="comment"># Audit only (safe, no changes)</span>
-<span class="cmd">.\PowerShield.ps1 -Audit</span>
+<span class="c"># Audit only — no system modifications</span>
+<span class="k">.\PowerShield.ps1 -Audit</span>
 
-<span class="comment"># Audit + auto-fix</span>
-<span class="cmd">.\PowerShield.ps1 -Fix</span>
+<span class="c"># Audit with automatic remediation</span>
+<span class="k">.\PowerShield.ps1 -Fix</span>
 
-<span class="comment"># Specific modules only</span>
-<span class="cmd">.\PowerShield.ps1 -Module Firewall,Services,TLSCrypto</span>
+<span class="c"># Target specific modules</span>
+<span class="k">.\PowerShield.ps1 -Module Firewall,Services,TLSCrypto</span>
 
-<span class="comment"># Dry run (preview changes)</span>
-<span class="cmd">.\PowerShield.ps1 -DryRun</span>
+<span class="c"># Dry run — preview all changes before applying</span>
+<span class="k">.\PowerShield.ps1 -DryRun</span>
 
-<span class="comment"># One-liner (download and audit)</span>
-<span class="cmd">irm https://raw.githubusercontent.com/SiteQ8/PowerShield/main/PowerShield.ps1 | iex</span>
-        </div>
+<span class="c"># CIS Level 2 profile</span>
+<span class="k">.\PowerShield.ps1 -Fix -Profile level2</span></div>
     </div>
 
+    <!-- Standards -->
     <div class="section">
+        <div class="section-label">Compliance</div>
         <div class="section-title">Standards Alignment</div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden">
-        <table class="std-table">
-            <thead><tr><th>Standard</th><th>Coverage</th><th>Description</th></tr></thead>
+        <div class="section-desc">Every check in PowerShield is mapped to one or more industry-recognized security standards. The tool supports multiple compliance profiles for different organizational requirements.</div>
+        <div class="tbl-wrap">
+        <table>
+            <thead><tr><th>Standard</th><th>Coverage</th><th>Scope</th></tr></thead>
             <tbody>
-                <tr><td style="color:var(--blue);font-weight:600">CIS Benchmark Server 2019/2022</td><td>Level 1 + Level 2</td><td>Industry gold standard for Windows hardening</td></tr>
-                <tr><td style="color:var(--blue);font-weight:600">NIST SP 800-53 Rev 5</td><td>AC, AU, CM, IA, SC, SI</td><td>Federal security and privacy controls</td></tr>
-                <tr><td style="color:var(--blue);font-weight:600">DISA STIG</td><td>CAT I, II, III</td><td>DoD technical implementation guidance</td></tr>
-                <tr><td style="color:var(--blue);font-weight:600">Microsoft Security Baselines</td><td>Server 2019/2022</td><td>Microsoft-recommended security configurations</td></tr>
+                <tr><td style="color:var(--accent);font-weight:600">CIS Benchmark for Windows Server 2019/2022</td><td>Level 1 and Level 2</td><td>Account policies, local policies, audit, firewall, services, registry, event logs, update</td></tr>
+                <tr><td style="color:var(--accent);font-weight:600">NIST SP 800-53 Revision 5</td><td>AC, AU, CM, IA, SC, SI</td><td>Access control, audit and accountability, configuration management, identification and authentication, system and communications protection, system and information integrity</td></tr>
+                <tr><td style="color:var(--accent);font-weight:600">DISA STIG</td><td>CAT I, II, III</td><td>LSA protection, WDigest, Credential Guard, SEHOP, TLS configuration, cipher suites, BitLocker, administrative shares</td></tr>
+                <tr><td style="color:var(--accent);font-weight:600">Microsoft Security Baselines</td><td>Server 2019 / 2022</td><td>Microsoft-recommended registry settings, Group Policy configurations, Windows Defender settings</td></tr>
             </tbody>
         </table>
         </div>
     </div>
 
-    <div class="footer">
-        <p>🛡️ PowerShield v2.0 — Your only destination for a secured Windows Server environment</p>
-        <p>MIT License | <a href="https://github.com/SiteQ8/PowerShield">GitHub</a> | <a href="https://github.com/SiteQ8">@SiteQ8</a> — Ali AlEnezi 🇰🇼</p>
-        <p style="margin-top:8px;opacity:0.5">CIS Benchmark · NIST 800-53 · DISA STIG · Microsoft Security Baselines · 811 lines of PowerShell</p>
+    <!-- Reports -->
+    <div class="section">
+        <div class="section-label">Reporting</div>
+        <div class="section-title">Multi-format compliance reporting</div>
+        <div class="section-desc">PowerShield generates three report formats with every execution. All reports include system metadata, compliance scoring, and detailed per-check results for audit evidence and remediation tracking.</div>
+        <div class="mod-grid" style="grid-template-columns:repeat(3,1fr)">
+            <div class="mod" style="flex-direction:column;text-align:center;padding:24px">
+                <div style="font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:8px">HTML</div>
+                <div style="font-size:0.82rem;color:var(--text2)">Visual report with color-coded results, compliance score, system information, and executive summary. Suitable for management review.</div>
+            </div>
+            <div class="mod" style="flex-direction:column;text-align:center;padding:24px">
+                <div style="font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:8px">CSV</div>
+                <div style="font-size:0.82rem;color:var(--text2)">Structured data export for integration with GRC platforms, SIEM systems, and spreadsheet-based compliance tracking workflows.</div>
+            </div>
+            <div class="mod" style="flex-direction:column;text-align:center;padding:24px">
+                <div style="font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:8px">JSON</div>
+                <div style="font-size:0.82rem;color:var(--text2)">Machine-readable output with full metadata, summary statistics, and individual results for API integration and automated pipelines.</div>
+            </div>
+        </div>
     </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>PowerShield v2.0 — Windows Server Hardening Framework</p>
+    <p>MIT License &nbsp;|&nbsp; <a href="https://github.com/SiteQ8/PowerShield">GitHub Repository</a> &nbsp;|&nbsp; <a href="https://github.com/SiteQ8">@SiteQ8</a></p>
+    <p style="margin-top:6px">CIS Benchmark &middot; NIST SP 800-53 &middot; DISA STIG &middot; Microsoft Security Baselines</p>
 </div>
 </body>
 </html>

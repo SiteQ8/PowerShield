@@ -1,36 +1,31 @@
-<svg width="900" height="240" xmlns="http://www.w3.org/2000/svg">
+<svg width="900" height="200" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0a0d14"/>
+      <stop offset="0%" stop-color="#080b12"/>
       <stop offset="50%" stop-color="#0d1525"/>
-      <stop offset="100%" stop-color="#0a0d14"/>
+      <stop offset="100%" stop-color="#080b12"/>
     </linearGradient>
-    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
-      <rect width="24" height="24" fill="none" stroke="#15253a" stroke-width="0.3"/>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="none" stroke="#15253a" stroke-width="0.25"/>
     </pattern>
   </defs>
-  <rect width="900" height="240" fill="url(#bg)"/>
-  <rect width="900" height="240" fill="url(#grid)" opacity="0.5"/>
-  <text x="100" y="135" text-anchor="middle" font-size="42">🛡️</text>
-  <circle cx="100" cy="120" r="38" fill="none" stroke="#0078d4" stroke-width="2" opacity="0.2"/>
-  <text x="800" y="133" text-anchor="middle" font-size="32">⚡</text>
-  <circle cx="800" cy="120" r="30" fill="none" stroke="#0078d4" stroke-width="1.5" opacity="0.15"/>
-  <text x="450" y="72" text-anchor="middle" font-family="monospace" font-size="44" font-weight="700" fill="#0078d4">PowerShield</text>
-  <text x="450" y="102" text-anchor="middle" font-family="monospace" font-size="15" fill="#c8d6e5">Windows Server Hardening Tool</text>
-  <text x="450" y="130" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a8ea0">Your only destination for a secured Windows Server environment</text>
-  <rect x="180" y="152" width="80" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="220" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">CIS Bench</text>
-  <rect x="270" y="152" width="85" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="312" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">NIST 800-53</text>
-  <rect x="365" y="152" width="75" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="402" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">DISA STIG</text>
-  <rect x="450" y="152" width="80" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="490" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">MS Baselines</text>
-  <rect x="540" y="152" width="75" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="577" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">12 Modules</text>
-  <rect x="625" y="152" width="95" height="22" rx="4" fill="#0078d420" stroke="#0078d450" stroke-width="1"/>
-  <text x="672" y="167" text-anchor="middle" font-family="monospace" font-size="10" font-weight="600" fill="#0078d4">120+ Checks</text>
-  <text x="450" y="205" text-anchor="middle" font-family="monospace" font-size="11" fill="#4a5d70">PowerShell 5.1+ • 12 modules • 120+ checks • CIS Level 1 &amp; 2 • Server 2019/2022 • Auto-fix • HTML Reports</text>
-  <rect x="405" y="215" width="90" height="18" rx="4" fill="#0078d415" stroke="#0078d430" stroke-width="1"/>
-  <text x="450" y="228" text-anchor="middle" font-family="monospace" font-size="9" font-weight="600" fill="#0078d4">v2.0.0 — 2026</text>
+  <rect width="900" height="200" fill="url(#bg)"/>
+  <rect width="900" height="200" fill="url(#grid)" opacity="0.4"/>
+  <rect x="0" y="0" width="4" height="200" fill="#0078d4" opacity="0.6"/>
+  <text x="450" y="62" text-anchor="middle" font-family="Consolas, monospace" font-size="42" font-weight="700" fill="#0078d4" letter-spacing="-1">PowerShield</text>
+  <text x="450" y="88" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" fill="#8b949e">Windows Server Hardening Framework</text>
+  <text x="450" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#484f58">Enterprise-grade security baseline enforcement for Windows Server 2019 / 2022</text>
+  <rect x="175" y="130" width="100" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="225" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">CIS Benchmark</text>
+  <rect x="285" y="130" width="95" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="332" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">NIST 800-53</text>
+  <rect x="390" y="130" width="75" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="427" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">DISA STIG</text>
+  <rect x="475" y="130" width="100" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="525" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">MS Baselines</text>
+  <rect x="585" y="130" width="65" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="617" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">12 Modules</text>
+  <rect x="660" y="130" width="75" height="20" rx="3" fill="#0078d412" stroke="#0078d430" stroke-width="0.8"/>
+  <text x="697" y="143" text-anchor="middle" font-family="Consolas" font-size="9" font-weight="600" fill="#0078d4">120+ Checks</text>
+  <text x="450" y="177" text-anchor="middle" font-family="Consolas" font-size="9" fill="#484f58">PowerShell 5.1+  |  12 modules  |  120+ checks  |  Auto-fix  |  HTML / CSV / JSON Reports  |  MIT License</text>
 </svg>
