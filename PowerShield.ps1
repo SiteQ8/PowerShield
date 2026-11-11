@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    PowerShield — Windows Server Hardening Tool v2.0
+    PowerShield: Windows Server Hardening Tool v2.0
 .DESCRIPTION
     The only tool you need to harden your Windows Server environment.
     Performs 120+ security checks across 12 modules, aligned to:
@@ -116,7 +116,7 @@ function Backup-Item { param([string]$Path)
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 1: ACCOUNT POLICIES
-# CIS 1.1-1.2 — Password Policy, Account Lockout
+# CIS 1.1-1.2: Password Policy, Account Lockout
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-AccountPolicies {
     Log-Section "1. ACCOUNT POLICIES (CIS 1.1-1.2)"
@@ -126,47 +126,47 @@ function Invoke-AccountPolicies {
     secedit /export /cfg $secpol /quiet 2>$null
     $cfg = Get-Content $secpol -ErrorAction SilentlyContinue
 
-    # 1.1.1 — Password History
+    # 1.1.1: Password History
     $val = ($cfg | Select-String "PasswordHistorySize" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 24) { Log-Pass "CIS 1.1.1 — Password history: $val (>=24)" }
     else { Log-Fail "CIS 1.1.1 — Password history: $val (should be >=24)" }
 
-    # 1.1.2 — Maximum password age
+    # 1.1.2: Maximum password age
     $val = ($cfg | Select-String "MaximumPasswordAge" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -le 365 -and [int]$val -gt 0) { Log-Pass "CIS 1.1.2 — Max password age: $val days" }
     else { Log-Fail "CIS 1.1.2 — Max password age: $val (should be 1-365)" }
 
-    # 1.1.3 — Minimum password age
+    # 1.1.3: Minimum password age
     $val = ($cfg | Select-String "MinimumPasswordAge" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 1) { Log-Pass "CIS 1.1.3 — Min password age: $val days" }
     else { Log-Fail "CIS 1.1.3 — Min password age: $val (should be >=1)" }
 
-    # 1.1.4 — Minimum password length
+    # 1.1.4: Minimum password length
     $val = ($cfg | Select-String "MinimumPasswordLength" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 14) { Log-Pass "CIS 1.1.4 — Min password length: $val (>=14)" }
     else { Log-Fail "CIS 1.1.4 — Min password length: $val (should be >=14)" }
 
-    # 1.1.5 — Password complexity
+    # 1.1.5: Password complexity
     $val = ($cfg | Select-String "PasswordComplexity" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -eq 1) { Log-Pass "CIS 1.1.5 — Password complexity: Enabled" }
     else { Log-Fail "CIS 1.1.5 — Password complexity: Disabled" }
 
-    # 1.1.6 — Reversible encryption
+    # 1.1.6: Reversible encryption
     $val = ($cfg | Select-String "ClearTextPassword" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -eq 0) { Log-Pass "CIS 1.1.6 — Reversible encryption: Disabled" }
     else { Log-Fail "CIS 1.1.6 — Reversible encryption: ENABLED (critical!)" }
 
-    # 1.2.1 — Account lockout duration
+    # 1.2.1: Account lockout duration
     $val = ($cfg | Select-String "LockoutDuration" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 15) { Log-Pass "CIS 1.2.1 — Lockout duration: $val min (>=15)" }
     else { Log-Fail "CIS 1.2.1 — Lockout duration: $val (should be >=15)" }
 
-    # 1.2.2 — Account lockout threshold
+    # 1.2.2: Account lockout threshold
     $val = ($cfg | Select-String "LockoutBadCount" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 1 -and [int]$val -le 5) { Log-Pass "CIS 1.2.2 — Lockout threshold: $val (1-5)" }
     else { Log-Fail "CIS 1.2.2 — Lockout threshold: $val (should be 1-5)" }
 
-    # 1.2.3 — Reset lockout counter
+    # 1.2.3: Reset lockout counter
     $val = ($cfg | Select-String "ResetLockoutCount" | ForEach-Object { ($_ -split '=')[1].Trim() })
     if ([int]$val -ge 15) { Log-Pass "CIS 1.2.3 — Reset lockout counter: $val min" }
     else { Log-Fail "CIS 1.2.3 — Reset lockout counter: $val (should be >=15)" }
@@ -175,68 +175,68 @@ function Invoke-AccountPolicies {
 }
 
 # ═══════════════════════════════════════════════════════════════════════
-# MODULE 2: LOCAL POLICIES — USER RIGHTS & SECURITY OPTIONS
-# CIS 2.2-2.3 — User Rights Assignment, Security Options
+# MODULE 2: LOCAL POLICIES - USER RIGHTS & SECURITY OPTIONS
+# CIS 2.2-2.3: User Rights Assignment, Security Options
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-LocalPolicies {
     Log-Section "2. LOCAL POLICIES (CIS 2.2-2.3)"
 
-    # 2.3.1.1 — Accounts: Administrator account status
+    # 2.3.1.1 - Accounts: Administrator account status
     $admin = Get-LocalUser -Name "Administrator" -ErrorAction SilentlyContinue
     if ($admin -and -not $admin.Enabled) { Log-Pass "CIS 2.3.1.1 — Built-in Administrator: Disabled" }
     elseif ($admin -and $admin.Enabled) { Log-Warn "CIS 2.3.1.1 — Built-in Administrator: Enabled (consider disabling)" }
 
-    # 2.3.1.2 — Accounts: Guest account status
+    # 2.3.1.2 - Accounts: Guest account status
     $guest = Get-LocalUser -Name "Guest" -ErrorAction SilentlyContinue
     if ($guest -and -not $guest.Enabled) { Log-Pass "CIS 2.3.1.2 — Guest account: Disabled" }
     else { Log-Fail "CIS 2.3.1.2 — Guest account: Enabled (must disable)" }
 
-    # 2.3.1.3 — Limit blank passwords to console only
+    # 2.3.1.3: Limit blank passwords to console only
     $val = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LimitBlankPasswordUse" -ErrorAction SilentlyContinue).LimitBlankPasswordUse
     if ($val -eq 1) { Log-Pass "CIS 2.3.1.3 — Blank password console-only: Enabled" }
     else { Log-Fail "CIS 2.3.1.3 — Blank password console-only: Not set" }
 
-    # 2.3.7.1 — Interactive logon: Don't display last signed-in
+    # 2.3.7.1 - Interactive logon: Don't display last signed-in
     $val = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DontDisplayLastUserName" -ErrorAction SilentlyContinue).DontDisplayLastUserName
     if ($val -eq 1) { Log-Pass "CIS 2.3.7.1 — Don't display last username: Enabled" }
     else { Log-Fail "CIS 2.3.7.1 — Don't display last username: Disabled" }
 
-    # 2.3.7.4 — Machine inactivity limit
+    # 2.3.7.4: Machine inactivity limit
     $val = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "InactivityTimeoutSecs" -ErrorAction SilentlyContinue).InactivityTimeoutSecs
     if ($val -and [int]$val -le 900 -and [int]$val -gt 0) { Log-Pass "CIS 2.3.7.4 — Inactivity timeout: $val sec" }
     else { Log-Fail "CIS 2.3.7.4 — Inactivity timeout: ${val:-not set} (should be <=900)" }
 
-    # 2.3.8.1 — Microsoft network client: Digitally sign communications (always)
+    # 2.3.8.1 - Microsoft network client: Digitally sign communications (always)
     $val = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
     if ($val -eq 1) { Log-Pass "CIS 2.3.8.1 — SMB client signing (always): Enabled" }
     else { Log-Fail "CIS 2.3.8.1 — SMB client signing (always): Disabled" }
 
-    # 2.3.9.1 — Microsoft network server: Digitally sign communications (always)
+    # 2.3.9.1 - Microsoft network server: Digitally sign communications (always)
     $val = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
     if ($val -eq 1) { Log-Pass "CIS 2.3.9.1 — SMB server signing (always): Enabled" }
     else { Log-Fail "CIS 2.3.9.1 — SMB server signing (always): Disabled" }
 
-    # 2.3.10.1 — Network access: Do not allow anonymous enumeration of SAM accounts
+    # 2.3.10.1 - Network access: Do not allow anonymous enumeration of SAM accounts
     $val = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RestrictAnonymousSAM" -ErrorAction SilentlyContinue).RestrictAnonymousSAM
     if ($val -eq 1) { Log-Pass "CIS 2.3.10.1 — Anonymous SAM enumeration: Blocked" }
     else { Log-Fail "CIS 2.3.10.1 — Anonymous SAM enumeration: Allowed" }
 
-    # 2.3.11.7 — Network security: LAN Manager authentication level
+    # 2.3.11.7 - Network security: LAN Manager authentication level
     $val = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue).LmCompatibilityLevel
     if ($val -ge 5) { Log-Pass "CIS 2.3.11.7 — LM auth level: $val (NTLMv2 only)" }
     else { Log-Fail "CIS 2.3.11.7 — LM auth level: $val (should be 5=NTLMv2 only)" }
 
-    # 2.3.17.1 — UAC: Admin Approval Mode for the Built-in Administrator
+    # 2.3.17.1 - UAC: Admin Approval Mode for the Built-in Administrator
     $val = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "FilterAdministratorToken" -ErrorAction SilentlyContinue).FilterAdministratorToken
     if ($val -eq 1) { Log-Pass "CIS 2.3.17.1 — UAC Admin Approval Mode: Enabled" }
     else { Log-Warn "CIS 2.3.17.1 — UAC Admin Approval Mode: Not configured" }
 
-    # 2.3.17.3 — UAC: Detect application installations and prompt for elevation
+    # 2.3.17.3 - UAC: Detect application installations and prompt for elevation
     $val = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableInstallerDetection" -ErrorAction SilentlyContinue).EnableInstallerDetection
     if ($val -eq 1) { Log-Pass "CIS 2.3.17.3 — UAC installer detection: Enabled" }
     else { Log-Fail "CIS 2.3.17.3 — UAC installer detection: Disabled" }
 
-    # 2.3.17.6 — UAC: Run all administrators in Admin Approval Mode
+    # 2.3.17.6 - UAC: Run all administrators in Admin Approval Mode
     $val = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -ErrorAction SilentlyContinue).EnableLUA
     if ($val -eq 1) { Log-Pass "CIS 2.3.17.6 — UAC (EnableLUA): Enabled" }
     else { Log-Fail "CIS 2.3.17.6 — UAC (EnableLUA): DISABLED (critical!)" }
@@ -244,7 +244,7 @@ function Invoke-LocalPolicies {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 3: AUDIT POLICY
-# CIS 17 — Advanced Audit Policy Configuration
+# CIS 17: Advanced Audit Policy Configuration
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-AuditPolicy {
     Log-Section "3. AUDIT POLICY (CIS 17)"
@@ -283,7 +283,7 @@ function Invoke-AuditPolicy {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 4: WINDOWS FIREWALL
-# CIS 9 — Windows Defender Firewall with Advanced Security
+# CIS 9: Windows Defender Firewall with Advanced Security
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-Firewall {
     Log-Section "4. WINDOWS FIREWALL (CIS 9)"
@@ -309,7 +309,7 @@ function Invoke-Firewall {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 5: WINDOWS DEFENDER & EXPLOIT PROTECTION
-# CIS 18.9.47 — Windows Defender, ASR, Exploit Guard
+# CIS 18.9.47: Windows Defender, ASR, Exploit Guard
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-Defender {
     Log-Section "5. WINDOWS DEFENDER & EXPLOIT PROTECTION (CIS 18.9.47)"
@@ -347,7 +347,7 @@ function Invoke-Defender {
         Log-Warn "Windows Defender preferences not accessible"
     }
 
-    # Exploit protection — DEP
+    # Exploit protection: DEP
     $dep = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "MoveImages" -ErrorAction SilentlyContinue).MoveImages
     if ($dep -ne 0) { Log-Pass "NIST — ASLR (MoveImages): Enabled" }
     else { Log-Warn "NIST — ASLR (MoveImages): Check configuration" }
@@ -360,7 +360,7 @@ function Invoke-Defender {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 6: NETWORK SECURITY
-# CIS 18.4 — MSS, Network Settings
+# CIS 18.4: MSS, Network Settings
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-NetworkSecurity {
     Log-Section "6. NETWORK SECURITY (CIS 18.4)"
@@ -418,7 +418,7 @@ function Invoke-NetworkSecurity {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 7: WINDOWS SERVICES
-# CIS 5 — System Services
+# CIS 5: System Services
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-Services {
     Log-Section "7. WINDOWS SERVICES (CIS 5)"
@@ -466,7 +466,7 @@ function Invoke-Services {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 8: REGISTRY HARDENING
-# CIS 18 — Administrative Templates (Computer)
+# CIS 18: Administrative Templates (Computer)
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-RegistryHardening {
     Log-Section "8. REGISTRY HARDENING (CIS 18)"
@@ -511,7 +511,7 @@ function Invoke-RegistryHardening {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 9: EVENT LOG SETTINGS
-# CIS 18.9.26 — Event Log sizes and retention
+# CIS 18.9.26: Event Log sizes and retention
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-EventLogs {
     Log-Section "9. EVENT LOG SETTINGS (CIS 18.9.26)"
@@ -552,7 +552,7 @@ function Invoke-EventLogs {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 10: TLS & CRYPTOGRAPHY
-# NIST/STIG — Protocol and cipher configuration
+# NIST/STIG: Protocol and cipher configuration
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-TLSCrypto {
     Log-Section "10. TLS & CRYPTOGRAPHY (NIST/STIG)"
@@ -599,7 +599,7 @@ function Invoke-TLSCrypto {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 11: WINDOWS UPDATE & PATCHING
-# CIS 18.9.108 — Windows Update configuration
+# CIS 18.9.108: Windows Update configuration
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-WindowsUpdate {
     Log-Section "11. WINDOWS UPDATE (CIS 18.9.108)"
@@ -626,7 +626,7 @@ function Invoke-WindowsUpdate {
 
 # ═══════════════════════════════════════════════════════════════════════
 # MODULE 12: ADDITIONAL HARDENING
-# Various — BitLocker, Credential Guard, Login Banner
+# Various: BitLocker, Credential Guard, Login Banner
 # ═══════════════════════════════════════════════════════════════════════
 function Invoke-AdditionalHardening {
     Log-Section "12. ADDITIONAL HARDENING (NIST/STIG)"
@@ -814,7 +814,7 @@ Show-ExecutiveSummary
 Show-Summary
 
 # ═══════════════════════════════════════════════════════════════════════
-# ENTERPRISE FEATURES — CSV/JSON Export, Executive Summary, Severity
+# ENTERPRISE FEATURES: CSV/JSON Export, Executive Summary, Severity
 # ═══════════════════════════════════════════════════════════════════════
 function Export-CSVReport {
     $csvPath = "$Script:LogDir\PowerShield-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
