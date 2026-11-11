@@ -28,11 +28,11 @@ The tool operates in three modes: **audit** (read-only assessment), **fix** (aut
 
 ### Design Principles
 
-- **Zero dependencies** — Pure PowerShell 5.1+. No external modules, agents, or frameworks.
-- **Non-destructive by default** — Audit mode makes no system changes. Every remediation is backed up.
-- **Standards-mapped** — Every check references a specific CIS, NIST, or STIG control identifier.
-- **Enterprise reporting** — HTML for management, CSV for GRC platforms, JSON for automation pipelines.
-- **Modular execution** — Run the full assessment or target individual modules.
+- **Zero dependencies**: Pure PowerShell 5.1+. No external modules, agents, or frameworks.
+- **Non-destructive by default**: Audit mode makes no system changes. Every remediation is backed up.
+- **Standards-mapped**: Every check references a specific CIS, NIST, or STIG control identifier.
+- **Enterprise reporting**: HTML for management, CSV for GRC platforms, JSON for automation pipelines.
+- **Modular execution**: Run the full assessment or target individual modules.
 
 ---
 
@@ -90,18 +90,18 @@ cd PowerShield
 
 | Module | CIS Reference | NIST Family | Checks | Description |
 |--------|---------------|-------------|--------|-------------|
-| **Account Policies** | 1.1–1.2 | IA | 9 | Password policy (history, age, length, complexity, reversible encryption) and account lockout (threshold, duration, reset counter) |
-| **Local Policies** | 2.2–2.3 | AC, IA | 12 | Administrator/Guest accounts, blank password restriction, SMB signing, SAM enumeration, NTLMv2 enforcement, UAC, inactivity timeout |
+| **Account Policies** | 1.1-1.2 | IA | 9 | Password policy (history, age, length, complexity, reversible encryption) and account lockout (threshold, duration, reset counter) |
+| **Local Policies** | 2.2-2.3 | AC, IA | 12 | Administrator/Guest accounts, blank password restriction, SMB signing, SAM enumeration, NTLMv2 enforcement, UAC, inactivity timeout |
 | **Advanced Audit Policy** | 17 | AU | 15 | 15 subcategories: credential validation, account management, process creation, logon/logoff, privilege use, policy change, system integrity |
-| **Windows Firewall** | 9 | SC | 12 | Domain/Private/Public profiles — enabled state, default inbound action, outbound action, logging |
+| **Windows Firewall** | 9 | SC | 12 | Domain/Private/Public profiles: enabled state, default inbound action, outbound action, logging |
 | **Defender and Exploit Guard** | 18.9.47 | SI | 10 | Real-time protection, behavior monitoring, PUA, IOAV, MAPS, signature freshness, ASLR, Credential Guard |
 | **Network Security** | 18.4 | SC, AC | 8 | SMBv1 elimination, SMB encryption, WinRM, LLMNR, NetBIOS, IPv6, RDP with NLA |
 | **Windows Services** | 5 | CM | 20 | 20 unnecessary services: IIS, FTP, SNMP, UPnP, SSDP, Xbox, WSL, mobile hotspot, media sharing |
 | **Registry Hardening** | 18 | CM | 14 | LSA Protection, WDigest, SEHOP, PowerShell logging, AlwaysInstallElevated, Remote Credential Guard |
 | **Event Log Configuration** | 18.9.26 | AU | 6 | Application/Security/System/Setup log sizing, Sysmon detection, PowerShell module logging |
-| **TLS and Cryptography** | — | SC-13 | 12+ | SSL 2.0/3.0 and TLS 1.0/1.1 deprecation, TLS 1.2/1.3 enforcement, weak cipher elimination |
+| **TLS and Cryptography** |: | SC-13 | 12+ | SSL 2.0/3.0 and TLS 1.0/1.1 deprecation, TLS 1.2/1.3 enforcement, weak cipher elimination |
 | **Windows Update** | 18.9.108 | SI | 3 | Automatic update policy, patch currency, pending reboot detection |
-| **Additional Hardening** | — | CM | 7 | Login banners, AutoPlay, BitLocker, Print Spooler, admin shares, Spectre/Meltdown, local admin count |
+| **Additional Hardening** |: | CM | 7 | Login banners, AutoPlay, BitLocker, Print Spooler, admin shares, Spectre/Meltdown, local admin count |
 
 ---
 
@@ -214,12 +214,12 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) for coding standards and submission 
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License, see [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
-  <sub>PowerShield — Enterprise Windows Server Hardening Framework</sub><br>
-  <sub><a href="https://github.com/SiteQ8">@SiteQ8</a> — Ali AlEnezi</sub><br>
+  <sub>PowerShield, Enterprise Windows Server Hardening Framework</sub><br>
+  <sub><a href="https://github.com/SiteQ8">@SiteQ8</a>, Ali AlEnezi</sub><br>
   <sub>CIS Benchmark &middot; NIST SP 800-53 &middot; DISA STIG &middot; Microsoft Security Baselines</sub>
 </div>
